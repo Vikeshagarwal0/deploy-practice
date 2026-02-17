@@ -1,38 +1,47 @@
 import mysql.connector as connector
-
-class DbHelper():
+class Student:
     def __init__(self):
         self.con = connector.connect(
-            host = "localhost",
-            port = 3306,
-            user = "root",
-            password = "Vikesh@2000",
-            database = "Pytest"
-        )
-        print("Connection successful")
-        
+        host = "localhost",
+        user = "root",
+        password = "Vikesh@2000",
+        database = "pytest",
+    )
+
+    def create_table(self):
+        query = "CREATE TABLE IF NOT EXISTS student(Id INT PRIMARY KEY, Name VARCHAR(20), Age INT)"
         cur = self.con.cursor()
-        query = "CREATE TABLE IF NOT EXISTS Employee(Id INT PRIMARY KEY, Name VARCHAR(50), City VARCHAR(50))"
         cur.execute(query)
         print("Table created successfully")
-    
-    def insert_employee(self):
+
+    def add_student(self,id, name, age):
+        query = "INSERT INTO student(Id, Name, Age) VALUES(%s, %s, %s)"
+        values = (id, name, age)
         cur = self.con.cursor()
-        ID = int(input("Enter Employee ID: "))
-        Name = input("Enter Employee Name: ")
-        City = input("Enter Employee City: ")
-        query = "INSERT INTO Employee(Id, Name, City) VALUES (%s,%s,%s)"
-        cur.execute(query, (ID, Name, City))
+        cur.execute(query,  values)
         self.con.commit()
-        print("Employee inserted successfully")
+        print("Student added successfully")
 
-    def show_employees(self):
+    def update_student(self,id, name, age):
+        query = "UPDATE student SET Name = %s, Age = %s WHERE Id = %s"
+        values = (name, age, id)
         cur = self.con.cursor()
-        query = "SELECT * FROM Employee"
-        cur.execute(query)
-        for row in cur.fetchall():
-            print(row)    
+        cur.execute(query, values)
+        self.con.commit()
+        print("Student updated successfully")
 
-helper = DbHelper()
-helper.insert_employee()
-helper.show_employees()
+    def show_student(self):
+        query = "SELECT * FROM student"
+        cur = self.con.cursor()
+        cur.execute(query)
+        for student in cur:
+            print(student)
+
+    def delete_student(self,id):
+        query = "DELETE FROM student WHERE Id = %s"
+        value = (id,)
+        cur = self.con.cursor()
+        cur.execute(query, value)
+        self.con.commit()
+        print("Student deleted successfully")
+
